@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler')
-const { Account, Bank } = require('thenewboston')
+const { Bank } = require('@commandokoala/thenewboston')
+
 const getTransactions = asyncHandler(
     async(req, res) =>{
         const bank = new Bank("http://20.98.98.0");
