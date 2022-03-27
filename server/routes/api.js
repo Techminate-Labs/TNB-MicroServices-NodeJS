@@ -5,6 +5,7 @@ const router = express.Router()
 const { getTransactions } = require('../app/Controllers/Account/Transaction')
 const { 
     createNewAccount, generatePublicKey, generateSignature, verifySignature,
+    signMessage,
 } = require('../app/Controllers/Account/Account')
 
 
@@ -16,5 +17,6 @@ router.get('/createNewAccount', createNewAccount)
 router.get('/generatePublicKey/', generatePublicKey)
 router.get('/generateSignature/', generateSignature)
 router.get('/verifySignature/', verifySignature)
+router.get('/signMessage/', signMessage)
 
 module.exports = router

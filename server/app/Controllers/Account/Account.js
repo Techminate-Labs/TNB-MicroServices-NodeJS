@@ -1,5 +1,4 @@
 const asyncHandler = require('express-async-handler')
-const bcrypt = require('bcryptjs')
 const { Account } = require('@commandokoala/thenewboston')
 
 const createNewAccount = asyncHandler(
@@ -78,9 +77,29 @@ const verifySignature = asyncHandler(
     }
 )
 
+const signMessage = asyncHandler(
+    async(req, res) =>{
+        const accountSigningKey = req.query.key;
+        const account = new Account(accountSigningKey);
+        const message = req.query.message;
+        const signedMessage = account.createSignedMessage({ name: "Tuna" });
+
+        if (signedMessage) {
+            res.status(201).json({
+                message:message,
+                signed_message: signedMessage,
+            })
+        } else {
+            res.status(404)
+            throw new Error('Invalid credentials')
+        }
+    }
+)
+
 module.exports ={
     createNewAccount,
     generatePublicKey,
     generateSignature,
-    verifySignature
+    verifySignature,
+    signMessage
 }
