@@ -112,9 +112,9 @@ const createBlockMessage = asyncHandler(
 
 const sendCoins = asyncHandler(
     async(req, res) =>{
-        const accountSigningKey = '58286cd054aa6734d6bcf6407b19f2f4aae5b4bd904a9831958c305c7041e490';
+        const accountSigningKey = req.query.senderPrivateKey
         const sendersAccount = new Account(accountSigningKey);
-        const bankUrl = "http://20.98.98.0";
+        const bankUrl = req.query.bankUrl;
         
         const paymentHandlerOptions = {
           account: sendersAccount,
@@ -127,8 +127,8 @@ const sendCoins = asyncHandler(
         await paymentHandler.init();
         
         //recipients public key
-        const recipientAccount = '8c44cb32b7b0394fe7c6a8c1778d19d095063249b734b226b28d9fb2115dbc74'
-        const amount = 5;
+        const recipientAccount = req.query.recipientPublicKey
+        const amount = parseInt(req.query.amount)
 
         let success = await paymentHandler.sendCoins(recipientAccount, amount, "memo");
 
