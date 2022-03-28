@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler')
-const { Account } = require('@commandokoala/thenewboston')
+const { Account, AccountPaymentHandler } = require('@commandokoala/thenewboston')
 
 const createNewAccount = asyncHandler(
     async(req, res) =>{
@@ -23,7 +23,7 @@ const generatePublicKey = asyncHandler(
         const account = new Account(accountSigningKey);
 
         if (account) {
-            res.status(201).json({
+            res.status(200).json({
                 public_key: account.accountNumberHex,
                 private_key: account.signingKeyHex
             })
@@ -43,7 +43,7 @@ const generateSignature = asyncHandler(
         const isValidPair = Account.isValidPair(account.signingKeyHex, account.accountNumberHex);
         
         if (account && isValidPair) {
-            res.status(201).json({
+            res.status(200).json({
                 is_valid_pair : isValidPair,
                 public_key: account.accountNumberHex,
                 message:message,
@@ -65,7 +65,7 @@ const verifySignature = asyncHandler(
         const isValidSignature = Account.verifySignature(message, signature, publicKey);
         
         if (publicKey && message && signature) {
-            res.status(201).json({
+            res.status(200).json({
                 is_valid_signature : isValidSignature,
                 message:message,
                 signature: signature,
@@ -82,13 +82,92 @@ const signMessage = asyncHandler(
         const accountSigningKey = req.query.key;
         const account = new Account(accountSigningKey);
         const message = req.query.message;
-        const signedMessage = account.createSignedMessage({ name: "Tuna" });
+        const signedMessage = account.createSignedMessage(message);
 
         if (signedMessage) {
-            res.status(201).json({
-                message:message,
-                signed_message: signedMessage,
-            })
+            res.status(200).json(signedMessage)
+        } else {
+            res.status(404)
+            throw new Error('Invalid credentials')
+        }
+    }
+)
+
+const createBlockMessage = asyncHandler(
+    async(req, res) =>{
+        const accountSigningKey = req.query.key;
+        const account = new Account(accountSigningKey);
+        const balanceKey = req.query.balanceKey;
+        const txs = [{amount: 23,recipient: "tuna"},{amount: 2,recipient: "baconandtuna"}]
+        const signedMessage = account.createBlockMessage(balanceKey, txs);
+
+        if (account) {
+            res.status(200).json(signedMessage)
+        } else {
+            res.status(404)
+            throw new Error('Invalid credentials')
+        }
+    }
+)
+
+const sendCoins = asyncHandler(
+    async(req, res) =>{
+        const accountSigningKey = '58286cd054aa6734d6bcf6407b19f2f4aae5b4bd904a9831958c305c7041e490';
+        const sendersAccount = new Account(accountSigningKey);
+        const bankUrl = "http://20.98.98.0";
+        
+        const paymentHandlerOptions = {
+          account: sendersAccount,
+          bankUrl: bankUrl,
+        };
+        
+        const paymentHandler = new AccountPaymentHandler(paymentHandlerOptions);
+        
+        // Method for getting the Bank and Primary validator Transactions fees
+        await paymentHandler.init();
+        
+        //recipients public key
+        const recipientAccount = '8c44cb32b7b0394fe7c6a8c1778d19d095063249b734b226b28d9fb2115dbc74'
+        const amount = 5;
+
+        let success = await paymentHandler.sendCoins(recipientAccount, amount, "memo");
+
+        if (success) {
+            res.status(200).json(success)
+        } else {
+            res.status(404)
+            throw new Error('Invalid credentials')
+        }
+    }
+)
+
+const bulkTransactions = asyncHandler(
+    async(req, res) =>{
+        const accountSigningKey = '58286cd054aa6734d6bcf6407b19f2f4aae5b4bd904a9831958c305c7041e490';
+        const sendersAccount = new Account(accountSigningKey);
+        const bankUrl = "http://20.98.98.0";
+        
+        const paymentHandlerOptions = {
+          account: sendersAccount,
+          bankUrl: bankUrl,
+        };
+        
+        const paymentHandler = new AccountPaymentHandler(paymentHandlerOptions);
+        
+        // Method for getting the Bank and Primary validator Transactions fees
+        await paymentHandler.init();
+        
+        const txs = [
+            {
+              amount: 10,
+              recipient: "8c44cb32b7b0394fe7c6a8c1778d19d095063249b734b226b28d9fb2115dbc74",
+            }
+        ];
+          
+        let success = await paymentHandler.sendBulkTransactions(txs);
+
+        if (success) {
+            res.status(200).json(success)
         } else {
             res.status(404)
             throw new Error('Invalid credentials')
@@ -101,5 +180,8 @@ module.exports ={
     generatePublicKey,
     generateSignature,
     verifySignature,
-    signMessage
+    signMessage,
+    createBlockMessage,
+    sendCoins,
+    bulkTransactions
 }
