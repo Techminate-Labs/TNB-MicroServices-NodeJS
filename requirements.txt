@@ -1,4 +1,3 @@
-$ npm i express dotenv colors
+$ npm i express express-async-handler dotenv colors mongoose bcryptjs
 $ npm i -D nodemon
-$ npm i express-async-handler
 $ npm i thenewboston
