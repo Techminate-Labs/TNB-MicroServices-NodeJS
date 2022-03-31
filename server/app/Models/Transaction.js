@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const accountSchema = mongoose.Schema(
+const transactionSchema = mongoose.Schema(
   {
     sender_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -36,4 +36,4 @@ const accountSchema = mongoose.Schema(
   }
 )
 
-module.exports = mongoose.model('Account', accountSchema)
+module.exports = mongoose.model('Transaction', transactionSchema)
