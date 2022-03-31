@@ -1,11 +1,11 @@
 const mongoose = require('mongoose')
 
-const accountSchema = mongoose.Schema(
+const depositSchema = mongoose.Schema(
   {
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User',
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
     },
     transaction_id: {
       type: String
@@ -34,4 +34,4 @@ const accountSchema = mongoose.Schema(
   }
 )
 
-module.exports = mongoose.model('Account', accountSchema)
+module.exports = mongoose.model('Deposit', depositSchema)
