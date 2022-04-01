@@ -3,15 +3,18 @@ const { Bank } = require('@commandokoala/thenewboston')
 
 const registerKey = asyncHandler(
     async(req, res) =>{
-        const bank = new Bank("http://20.98.98.0");
-        const transactions = await bank.getTransactions();
-        if (transactions) {
-            res.status(201).json({
-                transactions: transactions
-            })
-        } else {
-            res.status(404)
-            throw new Error('Not found')
+        const account_number = res.body.account_number;
+        const agent_pk = "pk"
+        //validate pk
+        const user_id = req.user.id
+         //check if user already has an registered account
+        //
+        //check if user is already on registraton process
+        const user_exit = "0"
+        if(user_exit){
+            //
+        }else{
+            //
         }
     }
 )
