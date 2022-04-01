@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler')
 const { Bank } = require('@commandokoala/thenewboston')
 
-const getTransactions = asyncHandler(
+const registerKey = asyncHandler(
     async(req, res) =>{
         const bank = new Bank("http://20.98.98.0");
         const transactions = await bank.getTransactions();
@@ -17,5 +17,5 @@ const getTransactions = asyncHandler(
 )
 
 module.exports ={
-    getTransactions
+    registerKey
 }
